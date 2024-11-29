@@ -10,6 +10,7 @@ import {
   validateUserData,
   validateUserDelete,
   validateUserUpdate,
+  ValidateShowUser
 } from "../validate";
 import * as yup from "yup";
 
@@ -17,9 +18,7 @@ import * as yup from "yup";
 export const createUserData = async (req, res) => {
   try {
     const user = req.body;
-    const validateData = await validateUserData.validate(user, {
-      abortEarly: false,
-    });
+    const validateData = await validateUserData.validate(user, {abortEarly: false});
 
     if (validateData) {
       const data = createUser(user);
@@ -35,12 +34,23 @@ export const createUserData = async (req, res) => {
 };
 
 //exibir o usuario
-
+export const showUserData = async (req, res) => {
   try {
+    const show = users
+    const showData = await ValidateShowUser.validate()
 
+    if (showData) {
+      res.status(200).send(`${show}`)
+    }
   } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      res.status(400).send(error.errors);
+    } else {
+      res.status(500).send("Ocorre um erro interno");
+    }
 
   }
+}
 
 //atualizar usuario
 
